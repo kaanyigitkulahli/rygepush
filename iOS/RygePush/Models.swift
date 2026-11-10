@@ -65,7 +65,7 @@ struct Attachment: Equatable, Sendable {
     /// Dosyalar uygulamasından seçilen dosyalara erişim izni yükleme sırasında açılır.
     var securityScoped: Bool
 
-    static let maxBytes: Int64 = 5 * 1024 * 1024 * 1024
+    static let maxBytes: Int64 = 100 * 1024 * 1024 * 1024
 }
 
 enum FeedFilter: Hashable {

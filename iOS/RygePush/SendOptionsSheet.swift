@@ -53,7 +53,7 @@ struct SendOptionsSheet: View {
                     } else if let attachment {
                         Text("Ekli: \(attachment.name) · \(Double(attachment.size).byteText)")
                     } else {
-                        Text("En fazla 5 GB. Büyük dosyalar yüklenirken uygulamayı açık tut. Link yapıştırırsan link olarak gider.")
+                        Text("En fazla 100 GB. Büyük dosyalar yüklenirken uygulamayı açık ve ekranda tut; 100 GB ev internetinde saatler sürebilir. Link yapıştırırsan link olarak gider.")
                     }
                 }
             }
@@ -104,7 +104,7 @@ struct SendOptionsSheet: View {
             return
         }
         guard size <= Attachment.maxBytes else {
-            problem = "Dosya en fazla 5 GB olabilir."
+            problem = "Dosya en fazla 100 GB olabilir."
             if !securityScoped { try? FileManager.default.removeItem(at: fileURL) }
             return
         }

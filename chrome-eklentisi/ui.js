@@ -192,7 +192,7 @@ if (isTab) $('sendPage').hidden = true;
 
 function setFile(f) {
   if (!f) return;
-  if (f.size > MAX_BYTES) { toast('Dosya en fazla 5 GB olabilir'); return; }
+  if (f.size > MAX_BYTES) { toast('Dosya en fazla 100 GB olabilir'); return; }
   if (!f.size) { toast('Dosya boş'); return; }
   pending = f;
   const a = $('attached'); a.hidden = false; a.textContent = '';
@@ -224,7 +224,8 @@ $('compose').addEventListener('submit', async (e) => {
   try {
     if (pending) {
       uploading = true;
-      const driveId = await uploadFile(pending, (p) => { btn.textContent = '%' + Math.floor(p * 100); });
+      const driveId = await uploadFile(pending, (p) => { btn.textContent = '%' + Math.floor(p * 100);
+        $('attached').querySelector('.name').textContent = `${pending.name} · ${size(Math.round(p * pending.size))} / ${size(pending.size)}`; });
       btn.textContent = 'Gönderiliyor…';
       await sendPush({ type: 'file', body: text, target, driveId });
     } else if (isLink(text)) {

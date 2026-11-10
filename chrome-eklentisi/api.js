@@ -1,6 +1,6 @@
 // RygePush sunucusuyla (Google Apps Script) konuşan ortak kod. Açılır pencere ve arka plan birlikte kullanır.
 
-export const MAX_BYTES = 5 * 1024 * 1024 * 1024;
+export const MAX_BYTES = 100 * 1024 * 1024 * 1024;
 const CHUNK = 32 * 1024 * 1024; // Drive için 256 KB'nin katı olmalı
 
 export async function getSettings() {
@@ -81,7 +81,7 @@ function receivedEnd(response) {
 
 /** Dosyayı Drive'a doğrudan, 32 MB'lık parçalarla yükler. Kopmada kaldığı yerden devam eder. */
 export async function uploadFile(file, onProgress) {
-  if (file.size > MAX_BYTES) throw new Error('Dosya en fazla 5 GB olabilir.');
+  if (file.size > MAX_BYTES) throw new Error('Dosya en fazla 100 GB olabilir.');
   if (!file.size) throw new Error('Dosya boş.');
   const start = await call({ action: 'uploadStart', name: file.name, mime: file.type || 'application/octet-stream', size: file.size });
   let offset = 0;
