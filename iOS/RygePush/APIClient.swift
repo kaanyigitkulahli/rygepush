@@ -18,6 +18,12 @@ struct APIClient: Sendable {
         let devices: [Device]?
     }
 
+    struct UploadStartResponse: Decodable, Sendable {
+        let ok: Bool
+        let error: String?
+        let uploadUrl: String?
+    }
+
     struct BasicResponse: Decodable, Sendable {
         let ok: Bool
         let error: String?
@@ -33,6 +39,16 @@ struct APIClient: Sendable {
 
     func sync(deviceId: String) async throws -> SyncResponse {
         try await call(["action": "sync", "deviceId": deviceId], as: SyncResponse.self)
+    }
+
+    /// Drive'da devam ettirilebilir yükleme oturumu açar; dosya bu adrese doğrudan gönderilir.
+    func startUpload(name: String, mime: String, size: Int64) async throws -> URL {
+        let response = try await call(["action": "uploadStart", "name": name, "mime": mime, "size": size],
+                                      as: UploadStartResponse.self)
+        guard let raw = response.uploadUrl, let url = URL(string: raw) else {
+            throw APIError(message: "Yükleme başlatılamadı.")
+        }
+        return url
     }
 
     @discardableResult

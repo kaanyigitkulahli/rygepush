@@ -56,13 +56,16 @@ struct Device: Codable, Identifiable, Hashable, Sendable {
     var isOnline: Bool { lastSeen > 0 && Date().timeIntervalSince1970 - lastSeen / 1000 < 120 }
 }
 
-/// Gönderilmeyi bekleyen ek.
+/// Gönderilmeyi bekleyen ek. Dosya belleğe alınmaz; yükleme sırasında diskten parça parça okunur.
 struct Attachment: Equatable, Sendable {
     var name: String
     var mime: String
-    var data: Data
+    var size: Int64
+    var fileURL: URL
+    /// Dosyalar uygulamasından seçilen dosyalara erişim izni yükleme sırasında açılır.
+    var securityScoped: Bool
 
-    static let maxBytes = 20 * 1024 * 1024
+    static let maxBytes: Int64 = 5 * 1024 * 1024 * 1024
 }
 
 enum FeedFilter: Hashable {

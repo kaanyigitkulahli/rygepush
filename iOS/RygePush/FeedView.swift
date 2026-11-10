@@ -226,14 +226,22 @@ struct FeedView: View {
         HStack(spacing: 8) {
             Image(systemName: "doc.fill").foregroundStyle(Brand.electric)
             Text(attachment.name).lineLimit(1)
-            Text(Double(attachment.data.count).byteText).foregroundStyle(.white.opacity(0.85))
-            Button {
-                self.attachment = nil
-            } label: {
-                Image(systemName: "xmark.circle.fill")
+            if let progress = store.uploadProgress {
+                Text("Yükleniyor %\(Int(progress * 100))")
+                    .monospacedDigit()
+                    .foregroundStyle(Brand.electric)
+            } else {
+                Text(Double(attachment.size).byteText).foregroundStyle(.white.opacity(0.85))
             }
-            .buttonStyle(.plain)
-            .accessibilityLabel("Eki kaldır")
+            if store.uploadProgress == nil {
+                Button {
+                    self.attachment = nil
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Eki kaldır")
+            }
         }
         .font(.footnote.weight(.semibold))
         .padding(.horizontal, 10)

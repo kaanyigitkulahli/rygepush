@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RygePush</title>
+<link rel="stylesheet" href="ui.css">
+</head>
+<body>
+  <!-- İlk kurulum -->
+  <section id="setup" class="setup" hidden>
+    <img src="icons/icon128.png" alt="" class="setup-logo">
+    <h1>RygePush'a bağlan</h1>
+    <p class="muted">Sunucu adresini ve erişim anahtarını gir. İkisi de iPhone'da girdiklerinle aynı.</p>
+    <form id="setupForm" autocomplete="off">
+      <label for="sUrl">Sunucu adresi</label>
+      <input id="sUrl" type="url" placeholder="https://script.google.com/macros/s/…/exec" required>
+      <label for="sKey">Erişim anahtarı</label>
+      <input id="sKey" type="password" placeholder="Code.gs içindeki ERISIM_ANAHTARI" required>
+      <label for="sName">Bu tarayıcının adı</label>
+      <input id="sName" type="text" value="Bilgisayar" maxlength="40" required>
+      <p id="setupErr" class="err" hidden></p>
+      <button id="setupBtn" class="primary" type="submit">Bağlan</button>
+    </form>
+  </section>
+
+  <!-- Ana ekran -->
+  <section id="main" class="main" hidden>
+    <header class="top">
+      <img src="icons/icon48.png" alt="" class="logo">
+      <div class="titles">
+        <h1>RygePush</h1>
+        <span class="status"><i id="dot" class="dot"></i><span id="st">Bağlanıyor</span></span>
+      </div>
+      <button id="openTab" class="icon-btn" type="button" title="Sekmede aç" aria-label="Sekmede aç">⤢</button>
+      <button id="openSettings" class="icon-btn" type="button" title="Ayarlar" aria-label="Ayarlar">⚙</button>
+    </header>
+    <nav id="chips" class="chips" aria-label="Pushları süz"></nav>
+    <main id="feed" class="feed" aria-live="polite"></main>
+    <form id="compose" class="compose" autocomplete="off">
+      <div class="row">
+        <label for="to" class="hint">Kime</label>
+        <select id="to"></select>
+        <button id="sendPage" type="button" class="ghost">Bu sayfayı gönder</button>
+      </div>
+      <div id="attached" class="attached" hidden></div>
+      <div class="row">
+        <button id="attachBtn" type="button" class="icon-btn" aria-label="Dosya ekle" title="Dosya ekle (en fazla 5 GB)">＋</button>
+        <input id="fileIn" type="file" hidden>
+        <label for="txt" class="sr">Push metni</label>
+        <textarea id="txt" rows="1" placeholder="Not ya da link yaz…"></textarea>
+        <button id="sendBtn" type="submit" class="primary">Gönder</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Ayarlar -->
+  <section id="settings" class="settings" hidden>
+    <header class="top">
+      <button id="closeSettings" class="icon-btn" type="button" aria-label="Geri">‹</button>
+      <h1>Ayarlar</h1>
+    </header>
+    <div class="settings-body">
+      <h2>Cihazlar</h2>
+      <ul id="devList" class="devlist"></ul>
+      <h2>Bu tarayıcının adı</h2>
+      <form id="renameForm" class="row">
+        <label for="myName" class="sr">Bu tarayıcının adı</label>
+        <input id="myName" type="text" maxlength="40">
+        <button class="ghost" type="submit">Kaydet</button>
+      </form>
+      <h2>Kısayollar</h2>
+      <p class="muted"><kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd> RygePush'u açar, <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> açık sayfayı tüm cihazlarına gönderir. Sayfada, linkte, seçili metinde ya da resimde sağ tıklayınca <b>RygePush'a gönder</b> menüsü çıkar.</p>
+      <h2>Bağlantı</h2>
+      <p class="muted" id="serverInfo"></p>
+      <button id="disconnect" class="danger" type="button">Bu tarayıcının bağlantısını kes</button>
+    </div>
+  </section>
+
+  <div id="toast" class="toast" hidden></div>
+  <script type="module" src="ui.js"></script>
+</body>
+</html>

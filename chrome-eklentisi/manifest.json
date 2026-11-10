@@ -1,0 +1,40 @@
+{
+  "manifest_version": 3,
+  "name": "RygePush",
+  "version": "1.0.0",
+  "description": "Cihazların arasında not, link ve dosya gönder. Pushbullet benzeri, kendi Google sunucunla çalışır.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "RygePush",
+    "default_popup": "ui.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "permissions": ["storage", "alarms", "notifications", "contextMenus", "activeTab"],
+  "host_permissions": [
+    "https://script.google.com/*",
+    "https://script.googleusercontent.com/*",
+    "https://www.googleapis.com/*"
+  ],
+  "commands": {
+    "_execute_action": {
+      "suggested_key": { "default": "Alt+Shift+R" },
+      "description": "RygePush'u aç"
+    },
+    "send-page": {
+      "suggested_key": { "default": "Alt+Shift+P" },
+      "description": "Açık sayfayı tüm cihazlarıma gönder"
+    }
+  }
+}

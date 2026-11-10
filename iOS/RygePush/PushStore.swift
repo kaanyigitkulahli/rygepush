@@ -24,6 +24,8 @@ final class PushStore {
     private(set) var status: Status = .connecting
     var errorMessage: String?
     private(set) var notificationStatus = "Bildirim izni bekleniyor"
+    /// Büyük dosya yüklenirken 0...1 arası ilerleme; yükleme yoksa nil.
+    private(set) var uploadProgress: Double?
 
     /// Firebase'in verdiği bildirim kodu. Gelince sunucuya kaydedilir.
     var pushToken: String? {
@@ -218,13 +220,16 @@ final class PushStore {
         var fields: [String: any Sendable] = ["action": "push", "source": deviceId, "target": target]
 
         if let attachment {
+            let driveId: String
+            do {
+                driveId = try await upload(attachment, using: client)
+            } catch {
+                errorMessage = "Dosya yüklenemedi. \(error.localizedDescription)"
+                return false
+            }
             fields["type"] = "file"
             fields["body"] = clean
-            fields["file"] = [
-                "name": attachment.name,
-                "mime": attachment.mime,
-                "base64": attachment.data.base64EncodedString(),
-            ]
+            fields["file"] = ["driveId": driveId]
         } else if Self.isLink(clean) {
             fields["type"] = "link"
             fields["url"] = clean
@@ -242,6 +247,33 @@ final class PushStore {
             errorMessage = "Gönderilemedi. \(error.localizedDescription)"
             return false
         }
+    }
+
+    /// Dosyayı Drive'a parça parça yükler. Uygulama arka plana geçerse iOS'tan ek süre ister;
+    /// yükleme sürerken ekranın kapanmasını engeller.
+    private func upload(_ attachment: Attachment, using client: APIClient) async throws -> String {
+        let scoped = attachment.securityScoped && attachment.fileURL.startAccessingSecurityScopedResource()
+        let app = UIApplication.shared
+        let bgTask = BackgroundTaskBox()
+        bgTask.id = app.beginBackgroundTask(withName: "RygePush yükleme") {
+            bgTask.end()
+        }
+        app.isIdleTimerDisabled = true
+        uploadProgress = 0
+        defer {
+            if scoped { attachment.fileURL.stopAccessingSecurityScopedResource() }
+            app.isIdleTimerDisabled = false
+            uploadProgress = nil
+            bgTask.end()
+        }
+
+        let uploadURL = try await client.startUpload(name: attachment.name, mime: attachment.mime, size: attachment.size)
+        let driveId = try await ResumableUploader.upload(fileURL: attachment.fileURL, size: attachment.size, to: uploadURL) { value in
+            Task { @MainActor in PushStore.shared.uploadProgress = value }
+        }
+        // Fotoğraf ve pano için oluşturulan geçici kopya artık gerekmiyor.
+        if !attachment.securityScoped { try? FileManager.default.removeItem(at: attachment.fileURL) }
+        return driveId
     }
 
     func togglePin(_ push: Push) async {
@@ -297,6 +329,18 @@ final class PushStore {
               let cache = try? JSONDecoder().decode(Cache.self, from: data) else { return }
         pushes = cache.pushes
         devices = cache.devices
+    }
+}
+
+/// iOS'tan istenen ek arka plan süresinin kimliği; süre dolunca ya da yükleme bitince kapatılır.
+@MainActor
+final class BackgroundTaskBox {
+    var id: UIBackgroundTaskIdentifier = .invalid
+
+    func end() {
+        guard id != .invalid else { return }
+        UIApplication.shared.endBackgroundTask(id)
+        id = .invalid
     }
 }
 
