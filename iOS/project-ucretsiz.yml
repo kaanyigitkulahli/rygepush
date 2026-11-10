@@ -1,0 +1,44 @@
+# XcodeGen proje tanımı: ücretsiz Apple hesabı sürümü (Sideloadly ile kurulum, uzaktan bildirim yok).
+# Kullanmak için bu dosyanın adını project.yml yap ve eski ios-build iş akışını kullan.
+name: RygePush
+options:
+  deploymentTarget:
+    iOS: "26.0"
+  createIntermediateGroups: true
+schemes:
+  RygePush:
+    build:
+      targets:
+        RygePush: all
+    run:
+      config: Debug
+    archive:
+      config: Release
+targets:
+  RygePush:
+    type: application
+    platform: iOS
+    sources:
+      - path: RygePush
+        excludes:
+          - "Info.plist"
+          - "RygePush.entitlements"
+          - "GoogleService-Info.plist"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.ornek.rygepush
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_VERSION: "6.0"
+        TARGETED_DEVICE_FAMILY: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+    info:
+      path: RygePush/Info.plist
+      properties:
+        CFBundleDisplayName: RygePush
+        UILaunchScreen: {}
+        UIUserInterfaceStyle: Dark
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        UIBackgroundModes: [fetch]
+        BGTaskSchedulerPermittedIdentifiers: [rygepush.yenile]

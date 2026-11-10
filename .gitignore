@@ -1,0 +1,11 @@
+# Xcode / XcodeGen çıktıları
+iOS/RygePush.xcodeproj/
+iOS/build/
+iOS/*.ipa
+iOS/Payload/
+*.xcarchive
+DerivedData/
+.DS_Store
+# Sırlar: asla depoya eklenmez, GitHub Secrets'tan gelir
+iOS/RygePush/GoogleService-Info.plist
+*.p8
